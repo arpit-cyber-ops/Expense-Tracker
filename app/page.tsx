@@ -6,9 +6,9 @@ import SummaryCard from "./components/SummaryCard"
 export default function App() {
     return (
         <div className="flex flex-col items-center gap-4 w-full min-h-screen bg-white text-black">
-            <div className="w-4/6">
+            <div className="max-w-5xl w-full px-6 mx-auto flex flex-col gap-6 p-6 m-4">
 
-                <div className="flex flex-col gap-8 m-4 p-4">
+                <div className="flex flex-col gap-6">
 
                     <Header />
 
@@ -16,7 +16,7 @@ export default function App() {
 
                 </div>
 
-                <div className="flex mx-4 px-4 gap-8">
+                <div className="flex gap-8">
 
                     <ExpenseForm />
 

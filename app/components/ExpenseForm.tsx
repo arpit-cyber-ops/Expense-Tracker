@@ -25,7 +25,7 @@ export default function ExpenseForm() {
                 </div>
 
                 <div className="flex flex-col">
-                    <button className="text-white font-semibold bg-black rounded-xl p-2.5">+ Add Expense</button>
+                    <button className="text-white font-semibold bg-black rounded-xl p-2.5 mt-1">+ Add Expense</button>
                 </div>
                 
             </div>
