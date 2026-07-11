@@ -1,19 +1,61 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExpenseProps } from "../type/ExpenseProps";
 import { FormProps } from "../type/FormProps";
 
 interface Expense {
     onAddExpense: (expense: ExpenseProps) => void;
+    editingExpense: ExpenseProps | null;
+    onUpdateExpense: (updateExpense: ExpenseProps) => void;
+    onFinishEditing: () => void;
 }
 
-export default function ExpenseForm({ onAddExpense }: Expense) {
+export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpense, onFinishEditing }: Expense) {
 
     const [formData, setFormData] = useState<FormProps>({
         amount: 0,
         category: "",
         description: ""
     })
+
+    function resetForm() {
+        setFormData({
+            amount: 0,
+            category: "",
+            description: ""
+        })
+    }
+
+    useEffect(() => {
+        if (editingExpense) {
+            setFormData({
+                amount: editingExpense.amount,
+                category: editingExpense.category,
+                description: editingExpense.description,
+            });
+        } else {
+            resetForm();
+        }
+    }, [editingExpense])
+
+    async function handleEdit() {
+        if (!editingExpense) return;
+        const response = await fetch("/api/expense", {
+            method: "PUT",
+            headers: {
+                "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+                id: editingExpense.id,
+                ...formData,
+            }),
+        });
+        const updatedExpense = await response.json();
+        onUpdateExpense(updatedExpense);
+        resetForm();
+        onFinishEditing();
+
+    }
 
     async function handleSave() {
         const response = await fetch("/api/expense", {
@@ -34,11 +76,7 @@ export default function ExpenseForm({ onAddExpense }: Expense) {
 
         onAddExpense(newCard);
 
-        setFormData({
-            amount: 0,
-            category: "",
-            description: ""
-        })
+        resetForm();
     }
 
     return (
@@ -61,24 +99,36 @@ export default function ExpenseForm({ onAddExpense }: Expense) {
                         value={formData.amount === 0 ? "" : formData.amount}
                         onChange={(e) => {
                             setFormData((prev) => ({
-                            ...prev,
-                            amount: Number(e.target.value),
-                        }))
+                                ...prev,
+                                amount: Number(e.target.value),
+                            }))
                         }} />
                 </div>
 
                 <div className="flex flex-col gap-2">
                     <label htmlFor="category">Category</label>
-                    <input
-                        type="text"
+                    <select
                         id="category"
-                        placeholder="Select Category"
-                        className="rounded-md bg-gray-100 px-2 py-1.5 hover:scale-102 transition-transform"
                         value={formData.category}
-                        onChange={(e) => setFormData(prev => ({
-                            ...prev,
-                            category: e.target.value
-                        }))} />
+                        onChange={(e) =>
+                            setFormData(prev => ({
+                                ...prev,
+                                category: e.target.value,
+                            }))
+                        }
+                        className={`rounded-md bg-gray-100 px-2 py-1.5 hover:scale-102 transition-transform ${formData.category === ""
+                            ? "text-gray-500"
+                            : "text-black"
+                            }`}>
+                        <option value="" disabled>Select Category</option>
+                        <option value="Food">Food</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Learning">Learning</option>
+                        <option value="Other">Other</option>
+                    </select>
+
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -95,12 +145,22 @@ export default function ExpenseForm({ onAddExpense }: Expense) {
                         }))} />
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-4 items-center">
                     <button
-                        className="text-white font-semibold bg-black rounded-xl p-2.5 mt-1 cursor-pointer hover:scale-102 hover:bg-gray-950 transition-transform"
-                        onClick={handleSave}>
-                        + Add Expense
+                        className="text-white font-semibold w-full bg-black rounded-xl p-2.5 mt-1 cursor-pointer hover:scale-102 hover:bg-gray-950 transition-transform"
+                        onClick={editingExpense ? handleEdit : handleSave}>
+                        {editingExpense ? "Update Expense" : "Add Expense"}
                     </button>
+                    {editingExpense &&
+                        <button
+                        className="bg-black text-white rounded-xl p-2 cursor-pointer hover:scale-102 hover:bg-gray-950 transition-transform"
+                        onClick={() => {
+                            onFinishEditing();
+                            resetForm();
+                        }}>
+                            Cancel
+                        </button>
+                    }
                 </div>
 
             </div>

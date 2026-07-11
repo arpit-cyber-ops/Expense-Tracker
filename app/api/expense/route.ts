@@ -10,13 +10,13 @@ const prisma = new PrismaClient({
 })
 
 export async function GET() {
-    const cards = await prisma.expense.findMany()
-    return Response.json(cards);
+    const expenses = await prisma.expense.findMany()
+    return Response.json(expenses);
 }
 
 export async function POST(request: Request) {
     const body = await request.json();
-    const card = await prisma.expense.create({
+    const expense = await prisma.expense.create({
         data: {
             description: body.description,
             amount: body.amount,
@@ -24,16 +24,32 @@ export async function POST(request: Request) {
         },
     });
 
-    return Response.json(card);
+    return Response.json(expense);
 }
 
 export async function DELETE(request: Request) {
     const body = await request.json();
-    const card = await prisma.expense.delete({
+    const expense = await prisma.expense.delete({
         where: {
             id: body.id,
         },
     });
 
-    return Response.json(card);
+    return Response.json(expense);
+}
+
+export async function PUT(request: Request) {
+    const body = await request.json();
+    const expense = await prisma.expense.update({
+        where: {
+            id: body.id,
+        },
+        data: {
+            description: body.description,
+            amount: body.amount,
+            category: body.category,
+        },
+    });
+
+    return Response.json(expense);
 }

@@ -1,3 +1,5 @@
+import { ExpenseProps } from "../type/ExpenseProps";
+
 interface ExpenseCardProps {
     id: number
     description: string;
@@ -5,9 +7,10 @@ interface ExpenseCardProps {
     createdAt: string;
     amount: number;
     onDeleteExpense: (id: number) => void;
+    onEditingExpense: (expense: ExpenseProps) => void;
 }
 
-export default function ExpenseCard({ id, description, category, createdAt, amount, onDeleteExpense }: ExpenseCardProps) {
+export default function ExpenseCard({ id, description, category, createdAt, amount, onDeleteExpense, onEditingExpense }: ExpenseCardProps) {
     return (
         <div className="flex justify-between border border-gray-300 rounded-lg p-4 ">
             <div>
@@ -23,12 +26,24 @@ export default function ExpenseCard({ id, description, category, createdAt, amou
                     </p>
                 </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-6">
                 <p>${amount}</p>
+                <button
+                    onClick={() => onEditingExpense({
+                        id: id,
+                        description: description,
+                        category: category,
+                        amount: amount,
+                        createdAt: createdAt,
+                    })}
+                    className="cursor-pointer hover:scale-125 transition-transform">
+                    ✏️
+                </button>
                 <button
                     className="cursor-pointer hover:scale-125 transition-transform"
                     onClick={() => onDeleteExpense(id)}>
-                    🗑️</button>
+                    🗑️
+                </button>
             </div>
         </div>
     )

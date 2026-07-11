@@ -4,9 +4,10 @@ import ExpenseCard from "./ExpenseCard"
 interface ExpenseListProps {
     expenses: ExpenseProps[];
     onDeleteExpense: (id: number) => void;
+    onEditingExpense: (expense: ExpenseProps) => void;
 }
 
-export default function ExpenseList({expenses, onDeleteExpense}: ExpenseListProps) {
+export default function ExpenseList({expenses, onDeleteExpense, onEditingExpense}: ExpenseListProps) {
 
     return (
         <div className="flex flex-col gap-4 p-4 border border-gray-300 bg-white rounded-xl flex-1">
@@ -24,6 +25,7 @@ export default function ExpenseList({expenses, onDeleteExpense}: ExpenseListProp
                         createdAt={expense.createdAt}
                         amount={expense.amount}
                         onDeleteExpense={onDeleteExpense}
+                        onEditingExpense={onEditingExpense}
                     />
                 ))}
             </div>
