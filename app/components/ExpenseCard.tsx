@@ -1,23 +1,34 @@
 interface ExpenseCardProps {
+    id: number
     description: string;
     category: string;
-    date: string;
+    createdAt: string;
     amount: number;
+    onDeleteExpense: (id: number) => void;
 }
 
-export default function ExpenseCard({description, category, date, amount}: ExpenseCardProps) {
+export default function ExpenseCard({ id, description, category, createdAt, amount, onDeleteExpense }: ExpenseCardProps) {
     return (
-        <div className="flex justify-between border px-4">
+        <div className="flex justify-between border border-gray-300 rounded-lg p-4 ">
             <div>
-                <p>{description}</p>
+                <p className="text-lg">{description}</p>
                 <div className="flex gap-4">
-                    <p>{category}</p>
-                    <p>{date}</p>
+                    <p className="text-gray-600">{category}</p>
+                    <p className="text-gray-600">
+                        | {new Date(createdAt).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                        })}
+                    </p>
                 </div>
             </div>
-            <div className="flex items-center gap-2">
-                <p>{amount}</p>
-                <button className="border">delete</button>
+            <div className="flex items-center gap-3">
+                <p>${amount}</p>
+                <button
+                    className="cursor-pointer hover:scale-125 transition-transform"
+                    onClick={() => onDeleteExpense(id)}>
+                    🗑️</button>
             </div>
         </div>
     )
