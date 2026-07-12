@@ -9,32 +9,64 @@ import { ExpenseProps } from "../type/ExpenseProps";
 export default function ExpensePage() {
 
     const [expenses, setExpenses] = useState<ExpenseProps[]>([]);
-    const [editingExpense, setEdittingExpense] = useState<ExpenseProps | null>(null);
+    const [editingExpense, setEditingExpense] = useState<ExpenseProps | null>(null);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        
+
         async function fetchExpenses() {
-            const response = await fetch("/api/expense");
-            const data: ExpenseProps[] = await response.json();
+            try {
 
-            setExpenses(data);
+                const response = await fetch("/api/expense");
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch expenses")
+                }
+                const data: ExpenseProps[] = await response.json();
+
+                setExpenses(data);
+            }   
+            
+            catch (error) {
+                console.log(error);
+                setError("Failed to load expenses. Please refresh the page.")
+            }
+
+            finally {
+                setLoading(false)
+            }
         }
-
         fetchExpenses()
     }, [])
 
     async function deleteExpense(deleteId: number) {
-        const response = await fetch("/api/expense", {
-            method: "DELETE",
-            headers: {
-                "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-                id: deleteId,
-            }),
-        });
-        setExpenses(prev => prev.filter(expense => expense.id !== deleteId))
-        setEdittingExpense(null)
+        setError("");
+        try {
+            const response = await fetch("/api/expense", {
+                method: "DELETE",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: deleteId,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error("Deleting failed. Try again")
+            }
+            setExpenses(prev => prev.filter(expense => expense.id !== deleteId))
+        }
+
+        catch (error) {
+            console.log(error);
+
+            setError("Failed to delete expense. Please try again.");
+        }
+
+        finally {
+            setEditingExpense(null);
+        }
     }
 
     return (
@@ -52,20 +84,22 @@ export default function ExpensePage() {
                 <div className="flex gap-8 items-start">
 
                     <ExpenseForm
-                        onAddExpense={expense => setExpenses(prev => [...prev, expense])} 
+                        onAddExpense={expense => setExpenses(prev => [...prev, expense])}
                         editingExpense={editingExpense}
                         onUpdateExpense={(updatedExpense) => setExpenses(prev => (
                             prev.map(expense => (
                                 expense.id === updatedExpense.id ? updatedExpense : expense
                             ))
                         ))}
-                        onFinishEditing={() => setEdittingExpense(null)}
+                        onFinishEditing={() => setEditingExpense(null)}
                     />
 
-                    <ExpenseList 
-                        expenses={expenses} 
-                        onDeleteExpense = {deleteExpense} 
-                        onEditingExpense={(expense) => setEdittingExpense(expense)}
+                    <ExpenseList
+                        expenses={expenses}
+                        onDeleteExpense={deleteExpense}
+                        onEditingExpense={(expense) => setEditingExpense(expense)}
+                        error={error}
+                        loading={loading}
                     />
 
                 </div>

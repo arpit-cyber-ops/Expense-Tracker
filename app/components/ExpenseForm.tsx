@@ -12,6 +12,9 @@ interface Expense {
 
 export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpense, onFinishEditing }: Expense) {
 
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+
     const [formData, setFormData] = useState<FormProps>({
         amount: 0,
         category: "",
@@ -24,6 +27,22 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
             category: "",
             description: ""
         })
+    }
+
+    function validateForm() {
+        if (formData.amount <= 0) {
+            setError("Enter a valid amount");
+            return false;
+        }
+        if (!formData.category) {
+            setError("Category cannot be empty");
+            return false;
+        }
+        if (!formData.description.trim()) {
+            setError("Description cannot be empty");
+            return false;
+        }
+        return true;
     }
 
     useEffect(() => {
@@ -39,43 +58,86 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
     }, [editingExpense])
 
     async function handleEdit() {
+        setError("");
         if (!editingExpense) return;
-        const response = await fetch("/api/expense", {
-            method: "PUT",
-            headers: {
-                "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-                id: editingExpense.id,
-                ...formData,
-            }),
-        });
-        const updatedExpense = await response.json();
-        onUpdateExpense(updatedExpense);
-        resetForm();
-        onFinishEditing();
+        if (!validateForm()) return;
+
+        setSaving(true);
+        try {
+
+            const response = await fetch("/api/expense", {
+                method: "PUT",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: editingExpense.id,
+                    ...formData,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Request Failed");
+            }
+
+            const updatedExpense = await response.json();
+            onUpdateExpense(updatedExpense);
+
+            resetForm();
+            onFinishEditing();
+        }
+        catch (error) {
+            console.log(error);
+
+            setError("Failed to edit expense! Please try again")
+        }
+
+        finally {
+            setSaving(false);
+        }
 
     }
 
     async function handleSave() {
-        const response = await fetch("/api/expense", {
-            method: "POST",
-            headers: {
-                "Content-type": "application/json",
-            },
-            body: JSON.stringify(formData),
-        });
-        const data = await response.json();
-        const newCard: ExpenseProps = {
-            id: data.id,
-            description: data.description,
-            category: data.category,
-            createdAt: data.createdAt,
-            amount: data.amount,
-        };
+        setError("");
+        if (!validateForm()) return;
+        setSaving(true)
+        try {
 
-        onAddExpense(newCard);
-        resetForm();
+            const response = await fetch("/api/expense", {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                throw new Error("Request Failed");
+            }
+
+            const data = await response.json();
+            const newCard: ExpenseProps = {
+                id: data.id,
+                description: data.description,
+                category: data.category,
+                createdAt: data.createdAt,
+                amount: data.amount,
+            };
+
+            onAddExpense(newCard);
+            resetForm();
+        }
+
+        catch (error) {
+            console.log(error);
+
+            setError("Failed to save expense! Please try again")
+        }
+
+        finally {
+            setSaving(false);
+        }
     }
 
     return (
@@ -87,6 +149,12 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
             </div>
 
             <div className="flex flex-col gap-5">
+
+                <div>
+                    {error && (
+                        <p className="text-black border-2 rounded-2xl p-2 bg-red-500">{error}</p>
+                    )}
+                </div>
 
                 <div className="flex flex-col gap-2">
                     <label htmlFor="amount">Amount</label>
@@ -147,8 +215,12 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
                 <div className="flex flex-col gap-4 items-center">
                     <button
                         className="text-white font-semibold w-full bg-black rounded-xl p-2.5 mt-1 cursor-pointer hover:scale-102 hover:bg-gray-950 transition-transform"
-                        onClick={editingExpense ? handleEdit : handleSave}>
-                        {editingExpense ? "Update Expense" : "Add Expense"}
+                        onClick={editingExpense ? handleEdit : handleSave}
+                        disabled={saving}>
+                        {saving ?
+                            editingExpense ?
+                                "Updating..." : "Saving..." :
+                            editingExpense ? "Update Expense" : "Add Expense"}
                     </button>
                     {editingExpense &&
                         <button
@@ -156,6 +228,7 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
                             onClick={() => {
                                 onFinishEditing();
                                 resetForm();
+                                setError("");
                             }}>
                             Cancel
                         </button>

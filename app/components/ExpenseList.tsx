@@ -6,9 +6,11 @@ interface ExpenseListProps {
     expenses: ExpenseProps[];
     onDeleteExpense: (id: number) => void;
     onEditingExpense: (expense: ExpenseProps) => void;
+    error: string;
+    loading: boolean;
 }
 
-export default function ExpenseList({ expenses, onDeleteExpense, onEditingExpense }: ExpenseListProps) {
+export default function ExpenseList({ expenses, onDeleteExpense, onEditingExpense, error, loading }: ExpenseListProps) {
 
     const [filter, setFilter] = useState("");
 
@@ -33,6 +35,7 @@ export default function ExpenseList({ expenses, onDeleteExpense, onEditingExpens
                     >
                         <option value="">All</option>
                         <option value="Food">Food</option>
+                        <option value="Travel">Travel</option>
                         <option value="Shopping">Shopping</option>
                         <option value="Entertainment">Entertainment</option>
                         <option value="Learning">Learning</option>
@@ -40,19 +43,28 @@ export default function ExpenseList({ expenses, onDeleteExpense, onEditingExpens
                     </select>
                 </div>
             </div>
+            <div>{error && (
+                <p className="text-black border-2 rounded-2xl p-4 bg-red-500">{error}</p>
+            )}
+            </div>
             <div className="flex flex-col gap-6 p-2">
-                {filteredExpense.map(expense => (
-                    <ExpenseCard
-                        key={expense.id}
-                        id={expense.id}
-                        description={expense.description}
-                        category={expense.category}
-                        createdAt={expense.createdAt}
-                        amount={expense.amount}
-                        onDeleteExpense={onDeleteExpense}
-                        onEditingExpense={onEditingExpense}
-                    />
-                ))}
+                {loading ?
+                    <p className="text-center text-2xl rounded-2xl bg-slate-200 p-4">Loading...</p> :
+                    filteredExpense.length > 0 ?
+                    filteredExpense.map(expense => (
+                        <ExpenseCard
+                            key={expense.id}
+                            id={expense.id}
+                            description={expense.description}
+                            category={expense.category}
+                            createdAt={expense.createdAt}
+                            amount={expense.amount}
+                            onDeleteExpense={onDeleteExpense}
+                            onEditingExpense={onEditingExpense}
+                        />
+                    )) :
+                    <p className="text-center text-xl rounded-2xl bg-slate-100 p-6">Add your first expense</p>
+                }
             </div>
         </div>
     )
