@@ -12,7 +12,7 @@ interface ExpenseCardProps {
 
 export default function ExpenseCard({ id, description, category, createdAt, amount, onDeleteExpense, onEditingExpense }: ExpenseCardProps) {
     return (
-        <div className="flex justify-between border border-gray-300 rounded-lg p-4 ">
+        <div className="flex justify-between border border-gray-300 rounded-lg p-4 hover:scale-101 transition-transform duration-200">
             <div>
                 <p className="text-lg">{description}</p>
                 <div className="flex gap-4">

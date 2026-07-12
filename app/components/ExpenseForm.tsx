@@ -75,7 +75,6 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
         };
 
         onAddExpense(newCard);
-
         resetForm();
     }
 
@@ -153,11 +152,11 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
                     </button>
                     {editingExpense &&
                         <button
-                        className="bg-black text-white rounded-xl p-2 cursor-pointer hover:scale-102 hover:bg-gray-950 transition-transform"
-                        onClick={() => {
-                            onFinishEditing();
-                            resetForm();
-                        }}>
+                            className="bg-black text-white rounded-xl p-2 cursor-pointer hover:scale-102 hover:bg-gray-950 transition-transform"
+                            onClick={() => {
+                                onFinishEditing();
+                                resetForm();
+                            }}>
                             Cancel
                         </button>
                     }
