@@ -4,42 +4,40 @@ A full-stack expense tracking application built with **Next.js**, **TypeScript**
 
 I built this project to learn how authentication works in a real application and how to connect a React frontend with a database using Next.js API routes and Prisma. Unlike my previous project, this one stores user-specific data, meaning every user can only access and manage their own expenses.
 
-Along the way, I also got to work with loading states, form validation, CRUD operations, and organizing a slightly larger codebase.
+This project also gave me experience deploying a full-stack application using Vercel and working with a cloud-hosted PostgreSQL database.
 
----
+## Live Demo
+
+🔗 https://expense-tracker-mu-one-66.vercel.app
 
 ## Features
 
-* 🔐 User authentication with Clerk
-* 👤 User-specific expense management
-* ➕ Add new expenses
-* ✏️ Edit existing expenses
-* 🗑️ Delete expenses
-* 📂 Filter expenses by category
-* 💰 Automatically calculate total expenses
-* 📅 Display transaction dates
-* ⏳ Loading and saving states
-* 📱 Responsive layout
-
----
+- 🔐 User authentication with Clerk
+- 👤 User-specific expense management
+- ➕ Add new expenses
+- ✏️ Edit existing expenses
+- 🗑️ Delete expenses
+- 📂 Filter expenses by category
+- 💰 Automatic total expense calculation
+- 📅 Transaction history with dates
+- ⏳ Loading and saving states
+- 📱 Responsive design
 
 ## Tech Stack
 
 ### Frontend
 
-* Next.js 16 (App Router)
-* React 19
-* TypeScript
-* Tailwind CSS v4
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS v4
 
 ### Backend
 
-* Next.js Route Handlers
-* Prisma ORM
-* PostgreSQL (Neon)
-* Clerk Authentication
-
----
+- Next.js Route Handlers
+- Prisma ORM
+- PostgreSQL (Neon)
+- Clerk Authentication
 
 ## Screenshots
 
@@ -51,61 +49,73 @@ Along the way, I also got to work with loading states, form validation, CRUD ope
 
 ![Sign In](./public/screenshots/sign-in.png)
 
----
-
 ## Getting Started
 
-### 1. Clone the repository
+### Clone the repository
 
 ```bash
 git clone https://github.com/arpit-cyber-ops/Expense-Tracker.git
 cd Expense-Tracker
 ```
 
-### 2. Install dependencies
+### Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Create a `.env` file
+### Create environment variables
+
+Create a `.env` file:
 
 ```env
 DATABASE_URL=
-
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
 ```
 
-### 4. Run the database migrations
+Create a `.env.local` file:
+
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
+```
+
+### Generate the Prisma Client
+
+```bash
+npx prisma generate
+```
+
+### Run database migrations
 
 ```bash
 npx prisma migrate dev
 ```
 
-### 5. Start the development server
+### Start the development server
 
 ```bash
 npm run dev
 ```
 
----
-
 ## What I Learned
 
 Some of the things I learned while building this project:
 
-* The difference between authentication and authorization
-* How to protect API routes using Clerk
-* Storing and retrieving user-specific data with Prisma
-* Building CRUD APIs using Next.js Route Handlers
-* Managing state across multiple React components
-* Working with PostgreSQL in a full-stack application
-* Improving the overall structure of a larger React project compared to my first project
+- Authentication vs. authorization
+- Protecting API routes with Clerk
+- Storing user-specific data using Prisma
+- Building CRUD APIs with Next.js Route Handlers
+- Managing state across multiple React components
+- Connecting a Next.js application to a PostgreSQL database
+- Deploying a full-stack application to Vercel
+- Debugging production build issues and configuring environment variables
 
-This project also taught me that building a feature is only one part of development. Thinking about component structure, user experience, and keeping the code organized became much more important as the project grew.
-
----
+Compared to my first project, I spent more time thinking about project structure, code organization, and how different parts of the application communicate with each other.
 
 ## License
 
