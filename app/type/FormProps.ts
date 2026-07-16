@@ -1,5 +1,5 @@
 export interface FormProps {
-    amount: number;
+    amount: string;
     category: string;
     description: string;
 }

@@ -16,21 +16,21 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
     const [error, setError] = useState("");
 
     const [formData, setFormData] = useState<FormProps>({
-        amount: 0,
+        amount: "",
         category: "",
         description: ""
     })
 
     function resetForm() {
         setFormData({
-            amount: 0,
+            amount: "",
             category: "",
             description: ""
         })
     }
 
     function validateForm() {
-        if (formData.amount <= 0) {
+        if (Number(formData.amount) <= 0) {
             setError("Enter a valid amount");
             return false;
         }
@@ -48,7 +48,7 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
     useEffect(() => {
         if (editingExpense) {
             setFormData({
-                amount: editingExpense.amount,
+                amount: String(editingExpense.amount),
                 category: editingExpense.category,
                 description: editingExpense.description,
             });
@@ -73,6 +73,7 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
                 body: JSON.stringify({
                     id: editingExpense.id,
                     ...formData,
+                    amount: Number(formData.amount),
                 }),
             });
 
@@ -87,8 +88,6 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
             onFinishEditing();
         }
         catch (error) {
-            console.log(error);
-
             setError("Failed to edit expense! Please try again")
         }
 
@@ -109,7 +108,10 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
                 headers: {
                     "Content-type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    amount: Number(formData.amount),
+                }),
             });
 
             if (!response.ok) {
@@ -130,8 +132,6 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
         }
 
         catch (error) {
-            console.log(error);
-
             setError("Failed to save expense! Please try again")
         }
 
@@ -163,11 +163,11 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
                         id="amount"
                         placeholder="$ 0.00"
                         className="rounded-md bg-gray-100 px-2 py-1.5 hover:scale-102 transition-transform"
-                        value={formData.amount === 0 ? "" : formData.amount}
-                        onChange={(e) => {
+                        value={formData.amount}
+                        onChange={(e) => { !Number.isNaN(Number(e.target.value)) &&
                             setFormData((prev) => ({
                                 ...prev,
-                                amount: Number(e.target.value),
+                                amount: e.target.value,
                             }))
                         }} />
                 </div>

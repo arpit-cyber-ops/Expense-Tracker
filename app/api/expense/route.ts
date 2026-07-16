@@ -1,5 +1,7 @@
 import { PrismaClient } from "@/app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { auth } from "@clerk/nextjs/server";
+import { use } from "react";
 
 const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL!,
@@ -10,17 +12,50 @@ const prisma = new PrismaClient({
 })
 
 export async function GET() {
-    const expenses = await prisma.expense.findMany()
+
+    const { userId } = await auth();
+
+    if (!userId) {
+        return Response.json(
+            {
+                error: "Unauthorized",
+            },
+            {
+                status: 401,
+            }
+        );
+    };
+
+    const expenses = await prisma.expense.findMany({
+        where: {
+            userId: userId,
+        },
+    });
     return Response.json(expenses);
 }
 
 export async function POST(request: Request) {
+
+    const { userId } = await auth();
+
+    if (!userId) {
+        return Response.json(
+            {
+                error: "Unauthorized",
+            },
+            {
+                status: 401,
+            }
+        );
+    };
+
     const body = await request.json();
     const expense = await prisma.expense.create({
         data: {
             description: body.description,
             amount: body.amount,
-            category: body.category
+            category: body.category,
+            userId,
         },
     });
 
@@ -28,28 +63,112 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+    const { userId } = await auth();
+    if (!userId) {
+        return Response.json(
+            {
+                error: "Unauthorized!",
+            },
+            {
+                status: 401,
+            }
+        );
+    };
+
     const body = await request.json();
-    const expense = await prisma.expense.delete({
+    const existingExpense = await prisma.expense.findUnique({
         where: {
             id: body.id,
         },
     });
 
-    return Response.json(expense);
+    if (!existingExpense) {
+        return Response.json(
+            {
+                error: "Expense not found",
+            },
+            {
+                status: 404,
+            }
+        );
+    };
+
+    if (existingExpense.userId === userId) {
+
+        const deletingExpense = await prisma.expense.delete({
+            where: {
+                id: body.id,
+            },
+        });
+
+        return Response.json(deletingExpense);
+    } else {
+        return Response.json(
+            {
+                error: "Expense not found",
+            },
+            {
+                status: 404,
+            }
+        );
+    };
 }
 
 export async function PUT(request: Request) {
+    const { userId } = await auth();
+
+    if (!userId) {
+        return Response.json(
+            {
+                error: "Unauthorized",
+            },
+            {
+                status: 401,
+            }
+        );
+    }
+
     const body = await request.json();
-    const expense = await prisma.expense.update({
+
+    const existingExpense = await prisma.expense.findUnique({
         where: {
             id: body.id,
         },
-        data: {
-            description: body.description,
-            amount: body.amount,
-            category: body.category,
-        },
     });
 
-    return Response.json(expense);
+    if (!existingExpense) {
+        return Response.json(
+            {
+                error: "Expense Not Found",
+            },
+            {
+                status: 404,
+            }
+        );
+    };
+
+    if (existingExpense.userId === userId) {
+
+
+        const updatingExpense = await prisma.expense.update({
+            where: {
+                id: body.id,
+            },
+            data: {
+                description: body.description,
+                amount: body.amount,
+                category: body.category,
+            },
+        });
+        return Response.json(updatingExpense);
+    } else {
+        return Response.json(
+            {
+                error: "Expense not Found",
+            },
+            {
+                status: 404,
+            }
+        );
+    }
 }

@@ -29,7 +29,6 @@ export default function ExpensePage() {
             }   
             
             catch (error) {
-                console.log(error);
                 setError("Failed to load expenses. Please refresh the page.")
             }
 
@@ -59,8 +58,6 @@ export default function ExpensePage() {
         }
 
         catch (error) {
-            console.log(error);
-
             setError("Failed to delete expense. Please try again.");
         }
 
@@ -77,7 +74,8 @@ export default function ExpensePage() {
 
                     <Header />
 
-                    <SummaryCard />
+                    <SummaryCard 
+                    expenses={expenses}/>
 
                 </div>
 

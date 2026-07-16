@@ -4,4 +4,7 @@ html {
     scrollbar-gutter: stable;
 }
 
-
+.cl-avatarBox {
+    height: 45px;
+    width: 45px;
+}

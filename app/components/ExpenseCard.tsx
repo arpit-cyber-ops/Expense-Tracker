@@ -27,7 +27,7 @@ export default function ExpenseCard({ id, description, category, createdAt, amou
                 </div>
             </div>
             <div className="flex items-center gap-6">
-                <p>${amount}</p>
+                <p>${amount.toLocaleString()}</p>
                 <button
                     onClick={() => onEditingExpense({
                         id: id,
