@@ -11,7 +11,7 @@ export default function SummaryCard({ expenses }: ExpenseSummaryProps) {
     };
 
     return (
-        <div className="border  text-white flex min-h-25 bg-purple-600 rounded-2xl">
+        <div className="border text-white flex min-h-25 bg-purple-600 rounded-2xl">
         <div className=" flex flex-col flex-1 gap-4 p-4 items-center border border-r-white">
             <p className="text-xl text-white/90">Total Expenses</p>
             <p className="text-4xl">{`$ ${total}`}</p>

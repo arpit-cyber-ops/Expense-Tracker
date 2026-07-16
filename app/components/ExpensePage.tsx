@@ -28,7 +28,7 @@ export default function ExpensePage() {
                 setExpenses(data);
             }   
             
-            catch (error) {
+            catch {
                 setError("Failed to load expenses. Please refresh the page.")
             }
 
@@ -57,7 +57,7 @@ export default function ExpensePage() {
             setExpenses(prev => prev.filter(expense => expense.id !== deleteId))
         }
 
-        catch (error) {
+        catch {
             setError("Failed to delete expense. Please try again.");
         }
 
@@ -67,8 +67,8 @@ export default function ExpensePage() {
     }
 
     return (
-        <div className="flex flex-col items-center gap-4 w-full min-h-screen bg-slate-50  text-black">
-            <div className="max-w-5xl w-full px-6 mx-auto flex flex-col gap-6 p-6 m-4">
+        <div className="flex flex-col items-center gap-4 min-h-screen bg-slate-50  text-black">
+            <div className="max-w-5xl w-full px-6 mx-auto flex flex-col gap-6 p-4 sm:p-6 lg:p-8">
 
                 <div className="flex flex-col gap-6">
 
@@ -79,7 +79,7 @@ export default function ExpensePage() {
 
                 </div>
 
-                <div className="flex gap-8 items-start">
+                <div className="flex flex-col lg:flex-row gap-8 items-start">
 
                     <ExpenseForm
                         onAddExpense={expense => setExpenses(prev => [...prev, expense])}

@@ -7,6 +7,6 @@ export default async function App() {
     await auth.protect();
 
     return (
-        <ExpensePage />
+            <ExpensePage />
     )
 }

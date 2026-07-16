@@ -141,7 +141,7 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
     }
 
     return (
-        <div className="border border-gray-300 bg-white rounded-xl flex flex-col gap-4 p-4 w-1/3">
+        <div className="border border-gray-300 bg-white rounded-xl flex flex-col gap-4 p-4 sm:p-5 w-full lg:w-1/3">
 
             <div className="flex flex-col">
                 <h2 className="font-semibold text-lg">Add Expense</h2>
@@ -224,7 +224,7 @@ export default function ExpenseForm({ onAddExpense, editingExpense, onUpdateExpe
                     </button>
                     {editingExpense &&
                         <button
-                            className="bg-black text-white rounded-xl p-2 cursor-pointer hover:scale-102 hover:bg-gray-950 transition-transform"
+                            className="w-full sm:w-auto bg-black text-white rounded-xl p-2 cursor-pointer hover:scale-102 hover:bg-gray-950 transition-transform"
                             onClick={() => {
                                 onFinishEditing();
                                 resetForm();

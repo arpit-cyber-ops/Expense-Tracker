@@ -20,7 +20,7 @@ export default function ExpenseList({ expenses, onDeleteExpense, onEditingExpens
             : expenses.filter(expense => expense.category === filter);
 
     return (
-        <div className="flex flex-col gap-4 p-4 border border-gray-300 bg-white rounded-xl flex-1">
+        <div className="flex flex-col gap-4 p-4 border border-gray-300 bg-white rounded-xl flex-1 w-full">
             <div className="flex justify-between">
                 <div>
                     <h2 className="font-semibold text-lg">Transactions</h2>
@@ -31,7 +31,7 @@ export default function ExpenseList({ expenses, onDeleteExpense, onEditingExpens
                         id="filter"
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        className="rounded-md bg-gray-100 px-2 py-1.5 hover:scale-102 transition-transform"
+                        className="w-full sm:w-40 rounded-md bg-gray-100 px-2 py-1.5 hover:scale-102 transition-transform"
                     >
                         <option value="">All</option>
                         <option value="Food">Food</option>
@@ -54,11 +54,7 @@ export default function ExpenseList({ expenses, onDeleteExpense, onEditingExpens
                     filteredExpense.map(expense => (
                         <ExpenseCard
                             key={expense.id}
-                            id={expense.id}
-                            description={expense.description}
-                            category={expense.category}
-                            createdAt={expense.createdAt}
-                            amount={expense.amount}
+                            expense={expense}
                             onDeleteExpense={onDeleteExpense}
                             onEditingExpense={onEditingExpense}
                         />
